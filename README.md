@@ -1,5 +1,9 @@
 # Derivatives Risk Intuition Dashboard
 
+> **Disclaimer:** This project is for educational purposes only. It does not constitute financial advice, investment recommendations, or an offer to buy or sell any securities or derivatives. The models and simulations are simplified approximations of production systems and should not be used for actual trading decisions. Use at your own risk.
+
+Licensed under the [MIT License](LICENSE).
+
 An interactive Streamlit dashboard for building intuition about quantitative derivatives trading. Select which risks you want exposure to, and the system constructs a portfolio, hedges the rest, and simulates forward to show P&L attribution — all using production-realistic models and live market data.
 
 ## Quick Start
@@ -144,6 +148,4 @@ src/dashboard/
 
 No configuration needed. All vol surfaces and yield curves use bundled data.
 
-## Disclaimer
 
-This project is for educational purposes only. It does not constitute financial advice, investment recommendations, or an offer to buy or sell any securities or derivatives. The models and simulations are simplified approximations of production systems and should not be used for actual trading decisions. Use at your own risk.
