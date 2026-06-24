@@ -143,3 +143,7 @@ src/dashboard/
 - `scipy` — statistical functions (normal distribution, root finding)
 
 No configuration needed. All vol surfaces and yield curves use bundled data.
+
+## Disclaimer
+
+This project is for educational purposes only. It does not constitute financial advice, investment recommendations, or an offer to buy or sell any securities or derivatives. The models and simulations are simplified approximations of production systems and should not be used for actual trading decisions. Use at your own risk.
