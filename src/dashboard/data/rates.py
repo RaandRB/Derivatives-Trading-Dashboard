@@ -1,37 +1,22 @@
-"""US Treasury yield curve from FRED + bundled swaption vol data.
+"""US Treasury yield curve (bundled) + bundled swaption vol data.
 
-Live yield curve: fetches from FRED (requires FRED_API_KEY env var).
+Yield curve: bundled snapshot of Treasury constant maturity rates.
 Swaption vols: bundled snapshot from public sources (ICE/CME indicative data).
 
 NOTE: The bundled swaption vols are representative snapshots. In production,
-desks use live feeds from Bloomberg/Refinitiv. The FRED yield curve is real
-but uses Treasury rates as a proxy for the swap curve (typically ~5-15bp spread
-for USD due to credit/liquidity differences). A production system would use
-OIS-discounted swap rates.
+desks use live feeds from Bloomberg/Refinitiv. The yield curve uses Treasury
+rates as a proxy for the swap curve (typically ~5-15bp spread for USD due to
+credit/liquidity differences). A production system would use OIS-discounted
+swap rates.
 """
 
 import json
-import os
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
 DATA_DIR = Path(__file__).parents[3] / "data"
-
-# FRED series IDs for Treasury constant maturity rates
-FRED_SERIES = {
-    "3M": "DGS3MO",
-    "6M": "DGS6MO",
-    "1Y": "DGS1",
-    "2Y": "DGS2",
-    "3Y": "DGS3",
-    "5Y": "DGS5",
-    "7Y": "DGS7",
-    "10Y": "DGS10",
-    "20Y": "DGS20",
-    "30Y": "DGS30",
-}
 
 # Tenor in years for each series
 TENOR_YEARS = {
@@ -41,42 +26,15 @@ TENOR_YEARS = {
 
 
 def get_yield_curve() -> pd.DataFrame:
-    """Fetch current US Treasury yield curve from FRED.
+    """Get US Treasury yield curve (bundled snapshot).
 
     Returns DataFrame with columns: tenor_label, tenor_years, rate (as decimal).
-    Falls back to bundled snapshot if FRED_API_KEY not set.
     """
-    api_key = os.environ.get("FRED_API_KEY")
-    if api_key:
-        return _fetch_fred(api_key)
     return _load_bundled_curve()
 
 
-def _fetch_fred(api_key: str) -> pd.DataFrame:
-    from fredapi import Fred
-    fred = Fred(api_key=api_key)
-
-    rows = []
-    for label, series_id in FRED_SERIES.items():
-        try:
-            data = fred.get_series(series_id)
-            latest = data.dropna().iloc[-1]
-            rows.append({
-                "tenor_label": label,
-                "tenor_years": TENOR_YEARS[label],
-                "rate": float(latest) / 100.0,
-            })
-        except Exception:
-            continue
-
-    if not rows:
-        return _load_bundled_curve()
-    return pd.DataFrame(rows)
-
-
 def _load_bundled_curve() -> pd.DataFrame:
-    """Fallback: representative USD yield curve (June 2025 snapshot)."""
-    # Representative rates as of mid-2025
+    """Representative USD yield curve (June 2025 snapshot)."""
     rates = {
         "3M": 0.0435, "6M": 0.0428, "1Y": 0.0410, "2Y": 0.0395,
         "3Y": 0.0388, "5Y": 0.0385, "7Y": 0.0390, "10Y": 0.0400,

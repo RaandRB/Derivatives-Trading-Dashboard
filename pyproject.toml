@@ -8,7 +8,6 @@ dependencies = [
     "streamlit==1.45.1",
     "yfinance>=1.4",
     "QuantLib==1.36",
-    "fredapi==0.5.2",
     "pysabr==0.4.0",
     "numpy==2.2.1",
     "scipy==1.15.2",

@@ -10,11 +10,6 @@ source .venv/bin/activate
 streamlit run src/dashboard/ui/app.py
 ```
 
-Optionally set a FRED API key for live yield curve data (otherwise uses bundled snapshot):
-```bash
-export FRED_API_KEY=your_key_here
-```
-
 ## How It Works
 
 ### The Flow
@@ -94,7 +89,7 @@ src/dashboard/
 │   ├── equity.py       yfinance option chains (live, cached 15min)
 │   ├── historical.py   SPX daily returns (download once, cached forever)
 │   ├── fx.py           FX spot (live) + vol surface (bundled, delta-space)
-│   └── rates.py        FRED yield curve (live) + swaption vols (bundled)
+│   └── rates.py        Bundled yield curve + swaption vols
 │
 ├── models/             Pricing engines
 │   ├── equity.py       QuantLib: implied vol surface → Dupire local vol
@@ -127,7 +122,7 @@ src/dashboard/
 |---|---|---|---|
 | Equity options | Local vol (Dupire) via QuantLib | yfinance (live, 15min delay) | Production uses stochastic-local-vol (SLV) |
 | FX options | Garman-Kohlhagen + SABR | Spot live, vol surface bundled | Production uses live feeds (Bloomberg FXGO) |
-| Rate swaptions | Bachelier + SABR (β=0.5) | FRED yield curve, bundled vols | Production uses OIS discounting, live vol cube |
+| Rate swaptions | Bachelier + SABR (β=0.5) | Bundled yield curve + vols | Production uses OIS discounting, live vol cube |
 
 ### Key Modeling Choices
 
@@ -142,16 +137,9 @@ src/dashboard/
 - `QuantLib` — local vol surfaces, yield curve bootstrapping
 - `pysabr` — SABR model calibration
 - `yfinance` — live equity/FX data
-- `fredapi` — FRED yield curve data
 - `cvxpy` — portfolio/hedge optimization (convex programming)
 - `plotly` — interactive visualizations
 - `streamlit` — dashboard framework
 - `scipy` — statistical functions (normal distribution, root finding)
 
-## Configuration
-
-| Environment Variable | Purpose | Required |
-|---|---|---|
-| `FRED_API_KEY` | Live US Treasury yield curve from FRED | No (falls back to bundled snapshot) |
-
-No other configuration needed. All vol surfaces have bundled fallback data.
+No configuration needed. All vol surfaces and yield curves use bundled data.
